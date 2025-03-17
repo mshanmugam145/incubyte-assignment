@@ -8,49 +8,6 @@ function App() {
   const [error, setError] = useState("");
   const [output, setOutput] = useState(null);
 
-  // const calculate = () => {
-  //   if(text === "") {
-  //     setOutput(0);
-  //     setError("")
-  //     return;
-  //   }
-  //   if(text.length === 1){
-  //     if(DELIMITER_CHARS.test(text)){
-  //       setOutput(null)
-  //       setError(`${text} character not allowed`)
-  //       return
-  //     }
-  //   }
-
-  //   // const arr = lines.flatMap(line => line.split(/[`!@#$%^&*()_+=\\n\[\]{};':\\"|,.<>\/?~]/));
-  //   const arr = text.split(DELIMITER_CHARS);
-  //   console.log(arr);
-  //   let result = 0;
-  //   let negativeNumber = []
-  //   for(let i = 0; i < arr.length; i++){
-  //     const item = arr[i];
-  //       if(!isNaN(item) && Number(item) < 0){
-  //         console.log(item);
-  //         negativeNumber.push(item);
-  //         continue;
-  //       }
-  //       if(!isNaN(item)){
-  //         const addNumber = Number(item);
-  //         if(addNumber < 1001){
-  //            result += Number(item);
-  //         }
-  //       }
-  //   }
-  //   if(negativeNumber.length){
-  //     const negative = negativeNumber.join(",")
-  //     setError(`${negative} - these nagative numbers are not allowed`)
-  //     setOutput(null)
-  //     return;
-  //   }
-  //   setOutput(result)
-  //   setError("")
-  // }
-
   const calculate = () => {
     if (text === "") {
       setOutput(0);
@@ -61,6 +18,12 @@ function App() {
     if (text.length === 1 && DELIMITER_CHARS.test(text)) {
       setOutput(null);
       setError(`${text} character not allowed`);
+      return;
+    }
+
+    if((/,\\n/.test(text))){
+      setOutput(null);
+      setError(`, and new Line back to back chars not allowed`);
       return;
     }
 
@@ -79,11 +42,25 @@ function App() {
     }
 
     if (negativeNumbers.length) {
-      setError(`${negativeNumbers.join(", ")} - these negative numbers are not allowed`);
+      setError(`❌ Exception: "negatives not allowed: ${negativeNumbers.join(", ")}"`);
       setOutput(null);
+    } else if(result === 0) {
+      if(isNaN(text)){
+        setError("All chars are not number");
+        setOutput(null);
+      } else {
+        if(Number(text) < 1001) {
+          setOutput(text)
+          setError("");
+        } else {
+          setOutput(null)
+          setError("Number entered is larger than 1000");
+        }
+      }
+
     } else {
-      setOutput(result);
       setError("");
+      setOutput(result);
     }
   };
 
@@ -92,7 +69,7 @@ function App() {
       <h1 className="text-3xl font-extrabold">String Calculator KATA</h1>
       <p>Important: special chars/delimiter used: `!@#$%^&*()_+=\\n\[\]{};':\\"|,.':\\"|,.\/?~ </p>
         <input className="w-6/12 m-2 p-2 border-1 border-gray-600 rounded-lg bg-white" type="text" value={text} onChange={(e) => setText(e.target.value)} />
-        <p data-testid="error" className="text-red-400">{error}</p>
+        <p data-testid="error" className="text-red-500">{error}</p>
         <button className="m-4 px-10 py-4 border-blue-800 rounded-lg bg-blue-500" onClick={calculate}>Submit</button>
         {
           output !== null && (
