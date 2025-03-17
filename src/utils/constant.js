@@ -1,0 +1,1 @@
+export const DELIMITER_CHARS = /[`!@#$%^&*()_+=\\n\[\]{};':\\"|,.<>\/?~]/;
